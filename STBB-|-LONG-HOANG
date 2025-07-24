@@ -1,0 +1,131 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
+local Window = Library:NewWindow("STBB | LONG HOANG")
+local Section = Window:NewSection("Main")
+
+local autoFarm = false
+local autoSkipHeli = false
+local autoBuyPulse = false
+local autoVoteZombie = false
+local autoVoteChristmas = false
+local autoEquip = false
+
+-- Random safe position
+local function getSafePosition()
+    local base = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not base then return Vector3.new(0, 50, 0) end
+    local offset = Vector3.new(math.random(-50, 50), math.random(10, 20), math.random(-50, 50))
+    return base.Position + offset
+end
+
+-- Smooth teleport
+local function TPWalkTo(pos, speed)
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+    local dist = (hrp.Position - pos).Magnitude
+    local tween = TweenService:Create(hrp, TweenInfo.new(dist / speed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pos)})
+    tween:Play()
+end
+
+-- Auto Gun Farm
+Section:CreateToggle("Auto Gun Farm", function(state)
+    autoFarm = state
+    if state then
+        task.spawn(function()
+            while autoFarm do
+                pcall(function()
+                    local pos = getSafePosition()
+                    TPWalkTo(pos, 100)
+                    ReplicatedStorage:WaitForChild("LMB"):FireServer()
+                end)
+                task.wait(1)
+            end
+        end)
+    end
+end)
+
+-- Auto Skip Helicopter
+Section:CreateToggle("Auto Skip Helicopter", function(state)
+    autoSkipHeli = state
+    if state then
+        task.spawn(function()
+            while autoSkipHeli do
+                pcall(function()
+                    ReplicatedStorage:WaitForChild("SkipHelicopter"):FireServer()
+                end)
+                task.wait(3)
+            end
+        end)
+    end
+end)
+
+-- Auto Buy Pulse Rifle
+Section:CreateToggle("Auto Buy Pulse Rifle", function(state)
+    autoBuyPulse = state
+    if state then
+        task.spawn(function()
+            while autoBuyPulse do
+                pcall(function()
+                    local args = { "Buy", "Pulse Rifle" }
+                    ReplicatedStorage:WaitForChild("ShopSystem"):FireServer(unpack(args))
+                end)
+                task.wait(3)
+            end
+        end)
+    end
+end)
+
+-- Auto Vote Mode: Zombie
+Section:CreateToggle("Auto Vote Zombie Mode", function(state)
+    autoVoteZombie = state
+    if state then
+        task.spawn(function()
+            while autoVoteZombie do
+                pcall(function()
+                    local args = { "Zombie" }
+                    ReplicatedStorage:WaitForChild("Vote"):FireServer(unpack(args))
+                end)
+                task.wait(3)
+            end
+        end)
+    end
+end)
+
+-- Auto Vote Mode: Christmas
+Section:CreateToggle("Auto Vote Christmas Mode", function(state)
+    autoVoteChristmas = state
+    if state then
+        task.spawn(function()
+            while autoVoteChristmas do
+                pcall(function()
+                    local args = { "Christmas" }
+                    ReplicatedStorage:WaitForChild("Vote"):FireServer(unpack(args))
+                end)
+                task.wait(3)
+            end
+        end)
+    end
+end)
+
+-- Auto Equip Pulse Rifle
+Section:CreateToggle("Auto Equip Pulse Rifle", function(state)
+    autoEquip = state
+    if state then
+        task.spawn(function()
+            while autoEquip do
+                pcall(function()
+                    local args = { "Equip", "Pulse Rifle" }
+                    ReplicatedStorage:WaitForChild("ShopSystem"):FireServer(unpack(args))
+                end)
+                task.wait(3)
+            end
+        end)
+    end
+end)
